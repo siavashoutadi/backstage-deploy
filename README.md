@@ -1,10 +1,39 @@
 # [Backstage](https://backstage.io)
 
-This is your newly scaffolded Backstage App, Good Luck!
+## Development
 
-To start the app, run:
+### Install dependencies
+First run the following command to download the dependencies.
 
-```sh
+```bash
 yarn install
-yarn dev
+```
+
+### Create database
+
+```bash
+./tasks db-run
+```
+
+### Set required variables
+Open the environment variable file.
+
+```bash
+vi .env/dev
+```
+
+And add the following content.
+
+```bash
+set -o allexport
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5432
+POSTGRES_USER=backstage
+POSTGRES_PASSWORD=backstage
+set +o allexport
+```
+### Run development server
+
+```bash
+./tasks dev
 ```

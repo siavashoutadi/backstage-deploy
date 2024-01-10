@@ -1,0 +1,35 @@
+#!/bin/bash
+
+set -eo pipefail
+
+POSTGRES_DOCKER_NAME=backstage-db
+
+function db-rm {
+    docker rm $POSTGRES_DOCKER_NAME
+}
+
+function db-run {
+    docker run --name $POSTGRES_DOCKER_NAME -d -e POSTGRES_PASSWORD=backstage -e POSTGRES_USER=backstage -e POSTGRES_DB=backstage -p 5432:5432 postgres:16.1-alpine
+}
+
+function db-start {
+    docker start $POSTGRES_DOCKER_NAME
+}
+
+function db-stop {
+    docker stop $POSTGRES_DOCKER_NAME
+}
+
+function dev {
+    source .env/dev
+    yarn dev
+}
+
+function help {
+    echo "$0 <task> <args>"
+    echo "Tasks:"
+    compgen -A function | cat -n
+}
+
+TIMEFORMAT="Task completed in %3lR"
+time ${@:-help}
