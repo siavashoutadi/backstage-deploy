@@ -30,6 +30,7 @@ POSTGRES_HOST=localhost
 POSTGRES_PORT=5432
 POSTGRES_USER=backstage
 POSTGRES_PASSWORD=backstage
+GITHUB_TOKEN=ghp_xxxx # Classic personal token with repo and workflow permissions
 set +o allexport
 ```
 ### Run development server
