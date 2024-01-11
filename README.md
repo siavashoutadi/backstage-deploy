@@ -43,7 +43,7 @@ set +o allexport
 ./tasks dev
 ```
 
-### Docker run
+### Build docker image
 
 For building a docker image run the following command.
 
@@ -74,13 +74,13 @@ DOCKER_IMAGE_TAG=$(git rev-parse --short HEAD)
 set +o allexport
 ```
 
-Now it is time to run the image using docker compose.
+Now it is time to run the image using docker compose using command below.
 
 ```bash
 ./tasks docker-up
 ```
 
-After testing the docker can be stopped by.
+After testing the docker can be stopped by following command.
 
 ```bash
 ./tasks docker-down
