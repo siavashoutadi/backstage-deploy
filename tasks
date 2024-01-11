@@ -3,6 +3,23 @@
 set -eo pipefail
 
 POSTGRES_DOCKER_NAME=backstage-db
+DOCKER_IMAGE_TAG=$(git rev-parse --short HEAD)
+
+function build {
+    DOCKER_BUILDKIT=1 \
+        BUILDKIT_PROGRESS=plain \
+        docker build . -t siavashoutadi/backstage-deploy:$DOCKER_IMAGE_TAG
+}
+
+function docker-up {
+    source .env/docker
+    docker compose up -d
+}
+
+function docker-down {
+    source .env/docker
+    docker compose down
+}
 
 function db-rm {
     docker rm $POSTGRES_DOCKER_NAME

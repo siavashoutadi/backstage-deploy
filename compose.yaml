@@ -1,0 +1,38 @@
+version: "3.3"
+services:
+  backstage-db:
+    image: postgres:16
+    networks:
+      - backstage
+    volumes:
+      - app-db-data:/var/lib/postgresql/data/pgdata
+    environment:
+      - PGDATA=/var/lib/postgresql/data/pgdata
+      - POSTGRES_USER=backstage
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD?Variable not set}
+      - POSTGRES_DB=backstage
+
+  backstage-deploy:
+    image: siavashoutadi/backstage-deploy:${DOCKER_IMAGE_TAG?Variable not set}
+    networks:
+      - backstage
+    ports:
+      - 7007:7007
+    environment:
+      - POSTGRES_HOST=backstage-db
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=backstage
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD?Variable not set}
+      - GITHUB_TOKEN=${GITHUB_TOKEN?Variable not set}
+      - GITHUB_CLIENT_ID=${GITHUB_CLIENT_ID?Variable not set}
+      - GITHUB_CLIENT_SECRET=${GITHUB_CLIENT_SECRET?Variable not set}
+    depends_on:
+      - backstage-db
+
+volumes:
+  app-db-data:
+    driver: local
+
+networks:
+  backstage:
+    external: true
