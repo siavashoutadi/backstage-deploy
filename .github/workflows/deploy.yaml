@@ -1,0 +1,47 @@
+name: SSH Deploy to Docker
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Environment to deploy to"
+        required: true
+        default: "production"
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Copy docker compose
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          source: "compose.yaml"
+          target: "/tmp/"
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@master
+        env:
+          SHA: ${{ github.sha }}
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          envs: SHA
+          script: |
+            echo ${{ secrets.DOCKER_TOKEN }} | docker login --username ${{ secrets.DOCKER_USERNAME }} --password-stdin
+            DOCKER_IMAGE_TAG=${SHA:0:7}
+            export DOCKER_IMAGE_TAG=$DOCKER_IMAGE_TAG
+            export POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+            export GITHUB_TOKEN=${{ secrets.GTOKEN }}
+            export GITHUB_CLIENT_ID=${{ secrets.CLIENT_ID }}
+            export GITHUB_CLIENT_SECRET=${{ secrets.CLIENT_SECRET }}
+            docker compose -f /tmp/compose.yaml up -d
+            rm -rf /tmp/compose.yaml
