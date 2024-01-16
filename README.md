@@ -74,6 +74,12 @@ DOCKER_IMAGE_TAG=$(git rev-parse --short HEAD)
 set +o allexport
 ```
 
+Create the network by running the following command.
+
+```bash
+docker network create backstage
+```
+
 Now it is time to run the image using docker compose using command below.
 
 ```bash
